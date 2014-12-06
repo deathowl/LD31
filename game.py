@@ -29,7 +29,7 @@ dead = pygame.image.load(imgs[1]).convert()
 done = False
 
 
-class cell:
+class Cell:
 
     def __init__(self,location,alive = False):
         self.to_be = None
@@ -37,62 +37,87 @@ class cell:
         self.pressed = False
         self.location = location
 
-class board:
+class Board:
 
     def __init__(self):
         self.map = []
 
-    def fill(self,ran):
+    def fill(self, ran):
         for i in xrange(map_size):
             self.map.append([])
             for g in xrange(map_size):
-                if ran == True:
-                    a = random.randint(0,4)
-                    if a == 0: self.map[i].insert(g,cell((i,g),True))
-                    else: self.map[i].insert(g,cell((i,g)))
-                else: self.map[i].insert(g,cell((i,g)))
-
+                if ran:
+                    a = random.randint(0, 4)
+                    if a == 0:
+                        self.map[i].insert(g, Cell((i, g), True))
+                    else:
+                        self.map[i].insert(g, Cell((i, g)))
+                else:
+                    self.map[i].insert(g, Cell((i, g)))
 
     def draw(self):
         for i in xrange(map_size):
             for g in xrange(map_size):
                 cell = self.map[i][g]
                 loc = cell.location
-                if cell.alive == True: screen.blit(alive,(loc[0]*imgs[2],loc[1]*imgs[2]))
-                else: screen.blit(dead,(loc[0]*imgs[2],loc[1]*imgs[2]))
+                if cell.alive:
+                    screen.blit(alive,(loc[0]*imgs[2],loc[1]*imgs[2]))
+                else:
+                    screen.blit(dead,(loc[0]*imgs[2],loc[1]*imgs[2]))
 
-    def get_cells(self,cell):# gets the cells around a cell
+    def get_cells(self, cell):# gets the cells around a cell
         mapa = self.map
         a = []
         b = []
         c = 0
         cell_loc = cell.location
-        try: a.append(mapa[abs(cell_loc[0]-1)][abs(cell_loc[1]-1)].location)
-        except Exception: pass
-        try: a.append(mapa[abs(cell_loc[0])][abs(cell_loc[1]-1)].location)
-        except Exception: pass
-        try: a.append(mapa[abs(cell_loc[0]+1)][abs(cell_loc[1]-1)].location)
-        except Exception: pass
-        try: a.append(mapa[abs(cell_loc[0]-1)][abs(cell_loc[1])].location)
-        except Exception: pass
-        try: a.append(mapa[abs(cell_loc[0]+1)][abs(cell_loc[1])].location)
-        except Exception: pass
-        try: a.append(mapa[abs(cell_loc[0]-1)][abs(cell_loc[1]+1)].location)
-        except Exception: pass
-        try: a.append(mapa[abs(cell_loc[0])][abs(cell_loc[1]+1)].location)
-        except Exception: pass
-        try: a.append(mapa[abs(cell_loc[0]+1)][abs(cell_loc[1]+1)].location)
-        except Exception: pass
+        try:
+            a.append(mapa[abs(cell_loc[0]-1)][abs(cell_loc[1]-1)].location)
+        except Exception:
+            pass
+        try:
+            a.append(mapa[abs(cell_loc[0])][abs(cell_loc[1]-1)].location)
+        except Exception:
+            pass
+        try:
+            a.append(mapa[abs(cell_loc[0]+1)][abs(cell_loc[1]-1)].location)
+        except Exception:
+            pass
+        try:
+            a.append(mapa[abs(cell_loc[0]-1)][abs(cell_loc[1])].location)
+        except Exception:
+            pass
+        try:
+            a.append(mapa[abs(cell_loc[0]+1)][abs(cell_loc[1])].location)
+        except Exception:
+            pass
+        try:
+            a.append(mapa[abs(cell_loc[0]-1)][abs(cell_loc[1]+1)].location)
+        except Exception:
+            pass
+        try:
+            a.append(mapa[abs(cell_loc[0])][abs(cell_loc[1]+1)].location)
+        except Exception:
+            pass
+        try:
+            a.append(mapa[abs(cell_loc[0]+1)][abs(cell_loc[1]+1)].location)
+        except Exception:
+            pass
         num = len(list(OrderedDict.fromkeys(a)))# removes duplicates
-        for i in xrange(len(a)): b.append(mapa[a[i][0]][a[i][1]].alive)
+        for i in xrange(len(a)):
+            b.append(mapa[a[i][0]][a[i][1]].alive)
         for i in b:# c houses how many cells are alive around it
-            if i == True: c+=1
-        if cell.alive == True:# rules
-            if c < 2: cell.to_be = False
-            if c > 3:cell.to_be = False
+            if i:
+                c += 1
+        if cell.alive:  # rules
+            if c < 2:
+                cell.to_be = False
+            if c > 3:
+                cell.to_be = False
         else:
-            if c == 3: cell.to_be = True
-                              #rules
+            if c == 3:
+                cell.to_be = True
+
     def update_frame(self):
         for i in xrange(map_size):
             for g in xrange(map_size):
@@ -104,25 +129,30 @@ class board:
             for g in xrange(map_size):
                 cell = self.map[i][g]
                 loc = cell.location
-                if cell.to_be != None: cell.alive = cell.to_be
-                if self.map[i][g].alive == True: screen.blit(alive,(loc[0]*imgs[2],loc[1]*imgs[2]))
-                else: screen.blit(dead,(loc[0]*imgs[2],loc[1]*imgs[2]))
+                if cell.to_be is not None:
+                    cell.alive = cell.to_be
+                if self.map[i][g].alive:
+                    screen.blit(alive,(loc[0]*imgs[2], loc[1] * imgs[2]))
+                else:
+                    screen.blit(dead,(loc[0]*imgs[2], loc[1] * imgs[2]))
                 cell.to_be = None
+
 
 def cell_list():
     lst = []
     for i in xrange(map_size):
         lst.append([])
-        for g in xrange(map_size): lst[i].append((board.map[i][g].location[0]*imgs[2],board.map[i][g].location[1]*imgs[2]))
+        for g in xrange(map_size):
+            lst[i].append((board.map[i][g].location[0]*imgs[2], board.map[i][g].location[1]*imgs[2]))
     return lst
 
-board = board()
+board = Board()
 board.fill(False)
 board.draw()
 tp = 0
 run = False
 
-while done == False:
+while not done:
     milliseconds = clock.tick(60)
     seconds = milliseconds / 1000.0
     tp += milliseconds
@@ -159,16 +189,16 @@ while done == False:
         board.fill(True)
         board.draw()
 
-    if run == True and tp >= 1000/speed :
+    if run and tp >= 1000/speed:
         tp = 0
         board.update_frame()
         board.update()
 
-    if mouse[0]:# 
+    if mouse[0]:
         rects = cell_list()
         for i in xrange(map_size):
             for g in xrange(map_size):
-                if pos[0] >= rects[i][g][0] and pos[0] < rects[i][g][0]+imgs[2] and pos[1] >= rects[i][g][1] and pos[1] < rects[i][g][1]+imgs[2] and board.map[i][g].pressed == False:
+                if pos[0] >= rects[i][g][0] and pos[0] < rects[i][g][0]+imgs[2] and pos[1] >= rects[i][g][1] and pos[1] < rects[i][g][1]+imgs[2] and not board.map[i][g].pressed:
                     board.map[i][g].alive = True
                     board.map[i][g].pressed = True
                     board.update()
@@ -177,7 +207,7 @@ while done == False:
         rects = cell_list()
         for i in xrange(map_size):
             for g in xrange(map_size):
-                if pos[0] >= rects[i][g][0] and pos[0] < rects[i][g][0]+imgs[2] and pos[1] >= rects[i][g][1] and pos[1] < rects[i][g][1]+imgs[2] and board.map[i][g].pressed == False:
+                if pos[0] >= rects[i][g][0] and pos[0] < rects[i][g][0]+imgs[2] and pos[1] >= rects[i][g][1] and pos[1] < rects[i][g][1]+imgs[2] and not board.map[i][g].pressed:
                     board.map[i][g].alive = False
                     board.map[i][g].pressed = False
                     board.update()
